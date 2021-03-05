@@ -1,0 +1,119 @@
+import random
+
+
+die = [1, 2, 3, 4, 5, 6]
+
+class Die():
+     def __init__(self):
+         self.val = random.randrange(1, 7)
+     def reroll(self):
+         self.val = random.randrange(1, 7)  #rolls the die, random number from 1-6
+     def __str__(self): #magic string
+        return "This die has a value of: " + str(self.val)
+     def __eq__(self,other_die): #magic method of eauals
+         return self.val == other_die.val
+     def __ne__(self,other_die): #magic value, not equals to each other
+         return self.val != other_die.val
+     def __lt__(self, other_die): #magic value, less than
+         return self.val < other_die.val
+     def __gt__(self, other_die): #magic value, greater than
+         return self.val > other_die.val
+     def __le__(self, other_die): #magic value, less than or equal too
+         return self.val <= other_die.val
+     def __ge__(self, other_die): #magic value, greater than or equal too
+         return self.val >= other_die.val
+     def __add__(self, other_die): #magic value, adding
+         return self.val + other_die.val
+
+
+class Player():
+    def __init__(self):
+        self.bankRoll = 200
+        self.score=0
+        self.die = Die() #making new die for player
+
+# class Computer():
+#     def __init__(self, die):
+#         self.bankRoll = 200
+#         self.die = Die() #making new die for player
+
+
+# All magic methods
+# print(die_a == die_b) #from magic method on line 12
+# print(die_a != die_b) #from magic method on line 14
+# print(die_a < die_b) #if die a is less than die b
+# print(die_a > die_b) #if die a is greater than die b
+# print(die_a <= die_b) #if die a is less than or equal too
+# print(die_a >= die_b) #if die a is greater than or equal too
+
+
+#####
+class Cup_of_Dice():
+    def __init__(self, user, computer):
+        self.no_dice = 2
+        self.no_dice=int(input('Please enter the number of dices you want to use for this game: \n '))
+        self.user=user
+        self.computer=computer
+
+    def roll_dice_user(self):
+        sum=0
+        for i in range(self.no_dice):
+            value= random.randrange(1,7)
+            print('User rolled :',value)
+            sum=sum+int(value)
+        user.score=sum
+        print()
+    def roll_dice_comp(self):
+        sum=0
+        for i in range(self.no_dice):
+            value= random.randrange(1,7)
+            print('Computer rolled : ',value)
+            sum=sum+int(value)
+        computer.score=sum
+
+
+
+#########  main program ###########
+user = Player()
+computer = Player()
+
+quit = 'Y'
+
+user.bankRoll = 200
+print("Computer starting Bankroll is: " , computer.bankRoll)
+print("Player starting Bankroll is: " , user.bankRoll)
+print()
+
+# The game loops until player or computer bankrupts or player quits
+
+while user.bankRoll > 0 and quit != 'Q':
+    user_Wager = int(input('How much do you want to wager? '))
+    print()
+    computer_Wager = user_Wager
+    pot = user_Wager + computer_Wager
+    g1=Cup_of_Dice(user,computer)
+    g1.roll_dice_user()
+    g1.roll_dice_comp()
+
+    print(f"\nUser total score is: {user.score}")
+    print()
+    print(f"Computer total score is: {computer.score} \n")
+
+    if user.score >= computer.score:
+        user.bankRoll = user.bankRoll + computer_Wager
+        computer.bankRoll = computer.bankRoll - computer_Wager
+        print('I won ! \n')
+    else :
+        user.bankRoll = user.bankRoll - user_Wager
+        computer.bankRoll = computer.bankRoll + user_Wager
+        print('I lost ! \n')
+
+    print("Computer's current Bankroll is: " , computer.bankRoll)
+    print("Player's current Bankroll is: " ,user.bankRoll)
+
+    quit = input('\nWant to bet again or cash out? Press enter to bet again or Q to quit. \n ')
+print()
+
+
+
+
