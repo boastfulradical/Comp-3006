@@ -1,0 +1,272 @@
+
+import math
+
+print()
+
+class Shape:
+    def __init__(self, name, line_length, angles_degrees, shape_type):
+            self.name = name
+            self.line_length = line_length
+            self.angle_degrees = angles_degrees
+            self.shape_type = int(shape_type)
+
+
+    def perimeter(self):
+        if self.shape_type in  [0, 3, 4]: #perimeter for square
+            self.perimeter1 = sum(self.line_length) #could be an issue
+        elif self.shape_type == 1:
+            self.perimeter1 = 2 * math.pi * self.line_length[0] # perimeter for circle
+        elif self.shape_type == 2:
+            self.perimeter1 = math.pi * math.sqrt(2) * ((1/2 * self.line_length[0])**2 + (1/2 * self.line_length[1])**2)
+            #perimeter for oval
+        #else:
+            #self.shape_type = input('Invalid Response. Try again. \n'
+                                    #'For Regular shape, input 0, \n'
+                                    #'For circle input 1, \n'
+                                    #'For terrible oval, input 2.\n'
+                                    #'For ugly rhombas, input 3.\n'
+                                    #'For paralagram, input 4.')
+        return self.perimeter1
+#perimeter(self)
+    def area(self):
+        if self.shape_type == 0:
+            if len(self.line_length) == 4:
+                self.area = min(self.line_length) * max(self.line_length)
+            elif len(self.line_length) == 3:  #triangle area
+                a = self.line_length[0]
+                b = self.line_length[1]
+                c = self.line_length[2]
+                s = ((a + b + c)/2)
+                self.area = math.sqrt(s*((s - a)*(s - b)*(s - c)))
+            elif len(self.line_length) > 4:
+
+                self.area = (((self.line_length[0])**2 * len(self.line_length)) /
+                             (4 * math.tan(math.radians(180/len(self.line_length)))))
+                # area formula for all polygons
+        elif self.shape_type == 1:
+            self.area = self.line_length[0]**2 *math.pi #area formula for circle
+        elif self.shape_type == 2:
+            self.area = self.line_length[0]/2 * self.line_length[1] /2 * math.pi #area formula for oval
+        elif self.shape_type == 3:
+            self.area = self.line_length[0]**2 * (math.sin(math.radians(self.angle_degrees[0]))) #area formula for rhombas
+        elif self.shape_type == 4:
+            self.area = min(self.line_length) * max(self.line_length) * math.sin(math.radians((self.angle_degrees[0])))
+        # else:
+        #     self.shape_type = input('Invalid Response. Try again. \n'
+        #                             'For Regular shape, input 0, \n'
+        #                             'For circle input 1, \n'
+        #                             'For terrible oval, input 2.\n'
+        #                             'For ugly rhombas, input 3.\n'
+        #                             'For paralagram, input 4.')
+        return self.area
+
+
+class Square:
+    def __init__(self, sidelength):
+        self.name = 'square'
+
+        self.length_of_each_side = sidelength
+        self.square = Shape(self.name, [self.length_of_each_side, self.length_of_each_side, self.length_of_each_side,
+                                        self.length_of_each_side], 0, 0)
+
+    def area(self):
+        self.area = self.square.area()
+
+        return(self.area)
+
+    def perimeter(self):
+        self.perimeter = self.square.perimeter()
+
+        return(self.perimeter)
+
+class Circle:
+    def __init__(self, sidelength):
+        self.name = 'circle'
+        self.radius = sidelength
+        self.circle = Shape(self.name, [self.radius], 0, 1)
+
+        self.area = self.circle.area()
+        self.perimeter = self.circle.perimeter()
+
+class Oval:
+    def __init__(self, sidelength1, sidelength2):
+        self.name = 'oval'
+        self.radius1 = sidelength1
+        self.radius2 = sidelength2
+        self.oval = Shape(self.name, [self.radius1, self.radius2], 0, 2)
+
+        self.area = self.oval.area()
+        self.perimeter = self.oval.perimeter()
+
+class Rhombas:
+    def __init__(self, sidelength1, angles):
+        self.name = 'Rhombas'
+        self.sidelength = sidelength1
+        self.angledegrees = angles
+        self.rhombas = Shape(self.name, [self.sidelength, self.sidelength,self.sidelength,
+                             self.sidelength],self.angledegrees, 3)
+
+        self.area = self.rhombas.area()
+        self.perimeter = self.rhombas.perimeter()
+
+class Paralagram:
+    def __init__(self, sidelength1, sidelength2, angles):
+        self.name = 'paralagram'
+        self.sidelength = sidelength1
+        self.sidelength2 = sidelength2
+        self.angledegrees = angles
+        self.Paralagram = Shape(self.name, [self.sidelength, self.sidelength, self.sidelength2, self.sidelength2],
+                                self.angledegrees, 4)
+
+        self.area = self.Paralagram.area()
+        self.perimeter = self.Paralagram.perimeter()
+
+class Rectangle:
+    def __init__(self, sidelength1, sidelength2):
+        self.name = 'rectangle'
+        self.sidelength = sidelength1
+        self.sidelength2 = sidelength2
+        self.rectangle = Shape(self.name, [self.sidelength, self.sidelength2, self.sidelength, self.sidelength2], 0, 0)
+
+        self.area = self.rectangle.area()
+        self.perimeter = self.rectangle.perimeter()
+
+class Polygon:
+    def __init__(self, sidelength, sidelength_count):
+        self.name = 'polygon'
+        self.sidelength = []
+        for i in range(0, sidelength_count):
+            self.sidelength.append(sidelength)
+        # print(self.sidelength)
+        self.polygon = Shape(self.name, self.sidelength, 0, 0)
+
+        self.area = self.polygon.area()
+        self.perimeter = self.polygon.perimeter()
+
+class Triangle:
+    def __init__(self, sidelength, sidelength1, sidelength2):
+        self.name = 'triangle'
+        self.sidelength = [sidelength, sidelength1, sidelength2]
+        self.triangle = Shape(self.name, self.sidelength, 0, 0)
+
+        self.area = self.triangle.area()
+        self.perimeter = self.triangle.perimeter()
+
+
+
+class Pentagon:
+    def __init__(self, sidelength):
+        self.name = 'pentagon'
+        self.sidelength = sidelength
+        self.pentagon = Shape(self.name, [self.sidelength, self.sidelength, self.sidelength, self.sidelength,
+                              self.sidelength], 0, 0)
+
+        self.area = self.pentagon.area()
+        # print(self.sidelength)
+        # print(type(self.sidelength))
+        self.perimeter = self.pentagon.perimeter()
+
+
+
+def main():
+
+    # how big is your square's side?
+    square = Square(9)
+    print("Square Area is:      " + str(square.area()) + '\n' 
+          "Square Perimeter is: " + str(square.perimeter()))
+    print()
+
+    # What's the radius of the circle?
+    circle = Circle(84)
+    print("Circle Area is:      " + str(circle.area) + '\n' 
+          "Circle Perimeter is: " + str(circle.perimeter))
+    print()
+
+    # What are the two radii's of the oval?
+    oval = Oval(5,3)
+    print("Oval Area is:      " + str(oval.area) + '\n'  
+          "Oval Perimeter is: " + str(oval.perimeter))
+    print()
+
+    # What are the side lengths and the angles of the rhombus?
+    # Note angles must add up to 360
+    rhombas = Rhombas(5, [60,120,60,120])
+    print("Rhombus area is:      " + str(rhombas.area) + '\n' 
+          "Rhombus Perimeter is: " + str(rhombas.perimeter))
+    print()
+
+    # What are the two sizes of the side lengths and the angles?
+    # Note angles must add up to 360
+    paralagram = Paralagram(9,5, [60, 120, 60, 120])
+    print("Parallelogram Area is:      " + str(paralagram.area) + '\n'  
+          "Parallelogram Perimeter is: " + str(paralagram.perimeter))
+    print()
+
+    # What are the two rectangle side lengths?
+    rectangle = Rectangle(5,3)
+    print("Rectangle Area is:      " + str(rectangle.area) + '\n' 
+          "Rectangle Perimeter is: " + str(rectangle.perimeter))
+    print()
+
+    # What are the length of the sides and how many sides are there in the Polygon?d
+    polygon = Polygon(9, 13)
+    print("Polygon Area is:      " + str(polygon.area) + '\n' 
+          "Polygon Perimeter is: " + str(polygon.perimeter))
+    print()
+
+    # What are the side lengths of the triangle?
+    # IMPORTANT NOTE: ONE SIDE CANNOT EXCEED 50% OF THE PERIMETER LENGTH,
+    # THIS WILL ERROR OUT BECAUSE THAT WILL NOT MAKE A TRIANGLE
+    triangle = Triangle(6,5,3)
+    print("Triangle Area is:      " + str(triangle.area) + '\n' 
+          "Triangle Perimeter is: " + str(triangle.perimeter))
+    print()
+
+    # What the side lengths of the pentagon?
+    pentagon = Pentagon(4)
+    print("Pentagon Area is:      " + str(pentagon.area) + '\n' 
+          "Pentagon Perimeter is: " + str(pentagon.perimeter))
+
+
+
+
+main()
+
+print()
+
+def main_2():
+
+    # Part 2: Zip Function Program
+
+    spadesA = ['Spades','Spades','Spades','Spades','Spades','Spades','Spades',
+               'Spades','Spades','Spades','Spades','Spades','Spades']
+    cardNum = ['Ace','2','3','4','5','6','7','8','9','10','Jack','Queen','King']
+
+    spades = zip(spadesA,cardNum)
+    print(tuple(spades))
+    print()
+
+    clubsA = ['Clubs','Clubs','Clubs','Clubs','Clubs','Clubs','Clubs',
+              'Clubs','Clubs','Clubs','Clubs','Clubs','Clubs']
+
+    clubs = zip(clubsA,cardNum)
+    print(tuple(clubs))
+    print()
+
+    diamondsA = ['Diamonds','Diamonds','Diamonds','Diamonds','Diamonds','Diamonds','Diamonds',
+                 'Diamonds','Diamonds','Diamonds','Diamonds','Diamonds','Diamonds']
+
+    diamonds = zip(diamondsA,cardNum)
+    print(tuple(diamonds))
+    print()
+
+    heartsA = ['Hearts', 'Hearts', 'Hearts', 'Hearts', 'Hearts', 'Hearts', 'Hearts',
+               'Hearts', 'Hearts', 'Hearts', 'Hearts', 'Hearts', 'Hearts']
+
+    hearts = zip(heartsA, cardNum)
+    print(tuple(hearts))
+    print()
+
+
+main_2()
+
