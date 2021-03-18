@@ -1,0 +1,861 @@
+
+# Death data credit to: Overmans, Rudiger: “Deutsche militärische Verluste im Zweiten Weltkrieg”
+# U-Boat death data credit to: Commaner Herbert Werner, "Iron Coffins"
+
+import tkinter as tk
+import matplotlib.pyplot as plt
+import random
+import numpy as np
+import pandas as pd
+import time as time
+
+
+#######     Establish data sets for plots       ############
+
+###### General Info
+
+
+#######     Wehrmacht Service Members info by birth Year
+
+birthYear = ['1873', '1875', '1877', '1878', '1879', '1881', '1882', '1884', '1885', '1886', '1887', '1888', '1889',
+             '1890', '1891', '1892', '1893', '1894', '1895', '1896', '1897', '1898', '1899', '1900', '1901', '1902',
+             '1903', '1904', '1905', '1906', '1907', '1908', '1909', '1910', '1911', '1912', '1913', '1914', '1915',
+             '1916', '1917', '1918', '1919', '1920', '1921', '1922', '1923', '1924', '1925', '1926', '1927', '1928']
+#count = 52
+birthCount= [248,    3773,   4699,   3773,   496,    8720,   4021,   16844,  16944,  15918,  26242,
+             11815,  28989,  34036,  34432,  49688,  44759,  88096,  90943,  115681, 194049, 200196,
+             212124, 265250, 236614, 294365, 282138, 302108, 388396, 567205, 566100, 671240, 679837,
+             736220, 698654, 746206, 793114, 858017, 671606, 499856, 447510, 458801, 689658, 931123,
+             918258, 735183, 725170, 696996, 578926, 382457, 223827, 43833]
+
+birthDeaths = [0,      0,      0,      2033,   0,      2000,   1000,   4033,   5033,   5033,   4033,   3033,   10132,
+               6033,   7066,   5033,   8099,   20165,  9000,   25198,  17033,  39297,  41330,  73726,  67627,  99759,
+               84660,  92825,  94858,  152287, 157221, 204452, 187353, 221650, 225551, 226683, 211221, 269881, 193353,
+               133825, 122627, 149858, 229287, 318848, 276419, 240419, 269749, 271716, 235683, 153188, 105990, 32231]
+
+#######    Total Wehrmacht Deaths by Month
+
+warMonths = ["Sept-39", "Oct-39",   "Nov-39", "Dec-39",  "Jan-40",   "Feb-40", "Mar-40",  "April-40", "May-40",
+             "June-40", "July-40",  "Aug-40", "Sept-40", "Oct-40",   "Nov-40", "Dec-40",  "Jan-41",   "Feb-41",
+             "Mar-41",  "April-41", "May-41", "June-41", "July-41",  "Aug-41", "Sept-41", "Oct-41",   "Nov-41",
+             "Dec-41",  "Jan-42",   "Feb-42", "Mar-42",  "April-42", "May-42", "June-42", "July-42",  "Aug-42",
+             "Sept-42", "Oct-42",   "Nov-42", "Dec-42",  "Jan-43",   "Feb-43", "Mar-43",  "April-43", "May-43",
+             "June-43", "July-43",  "Aug-43", "Sept-43", "Oct-43",   "Nov-43", "Dec-43",  "Jan-44",   "Feb-44",
+             "Mar-44",  "April-44", "May-44", "June-44", "July-44",  "Aug-44", "Sept-44", "Oct-44",   "Nov-44",
+             "Dec-44",  "Jan-45",   "Feb-45", "Mar-45",  "April-45", "May-45"]
+#count = 69
+
+grossWarDeaths = [15000,  3000,   1000,   0,     2000,  0,      5000,   3000,   21000,  29000,  7000,   4000,   4000,
+                  5033,   1000,   2000,   10000, 1000,  4000,   4000,   13000,  29000,  67132,  51066,  53033,  44099,
+                  38000,  42198,  53165,  52099, 46132, 24066,  44099,  34033,  46099,  74231,  46033,  30000,  38231,
+                  83792,  185376, 74363,  59099, 21066, 31099,  21066,  79231,  66198,  69495,  61330,  77396,  66330,
+                  81330,  91495,  112759, 92363, 78495, 182178, 215013, 348960, 151957, 184089, 103561, 159386, 451742,
+                  294772, 284442, 281848, 94528]
+
+grossWarCumm = [15000,   18000,   19000,   19000,   21000,   21000,   26000,   29000,   50000,   79000,   86000,
+                90000,   94000,   99033,   100033,  102033,  112033,  113033,  117033,  121033,  134033,  163033,
+                230165,  281231,  334264,  378363,  416363,  458561,  511726,  563825,  609957,  634023,  678122,
+                712155,  758254,  832485,  878518,  908518,  946749,  1030541, 1215917, 1290280, 1349379, 1370445,
+                1401544, 1422610, 1501841, 1568039, 1637534, 1698864, 1776260, 1842590, 1923920, 2015415, 2128174,
+                2220537, 2299032, 2481210, 2696223, 3045183, 3197140, 3381229, 3484790, 3644176, 4095918, 4390690,
+                4675132, 4956980, 5051508]
+
+##### Eastern Front Deaths Compared to All Other Fronts Info Set Up
+
+eastMonths = ["June-41", "July-41",  "Aug-41", "Sept-41", "Oct-41",   "Nov-41", "Dec-41",  "Jan-42",   "Feb-42",
+              "Mar-42",  "April-42", "May-42", "June-42", "July-42",  "Aug-42", "Sept-42", "Oct-42",   "Nov-42",
+              "Dec-42",  "Jan-43",   "Feb-43", "Mar-43",  "April-43", "May-43", "June-43", "July-43",  "Aug-43",
+              "Sept-43", "Oct-43",   "Nov-43", "Dec-43",  "Jan-44",   "Feb-44", "Mar-44",  "April-44", "May-44",
+              "June-44", "July-44",  "Aug-44", "Sept-44", "Oct-44",   "Nov-44", "Dec-44"]
+
+totalDeaths = [29000,  67132,  51066,  53033,  44099,  38000,  42198, 53165,  52099, 46132,  24066, 44099,
+               34033,  46099,  74231,  46033,  30000,  38231,  83792, 185376, 74363, 59099,  21066, 31099,
+               21066,  79231,  66198,  69495,  61330,  77396,  66330, 81330,  91495, 112759, 92363, 78495,
+               182178, 215013, 348960, 151957, 184089, 103561, 159386]
+#count = 43
+
+
+eastDeaths = [25000, 63099, 46066, 51033, 41099, 36000, 40198,  48165, 44099, 44132, 23066,  38099,  29033,
+              38066, 62165, 45033, 25000, 31198, 78759, 180310, 68330, 46066, 16000, 19066,  13066,  71231,
+              59198, 57429, 53264, 67363, 49330, 70330, 64429,  93660, 73264, 48363, 142079, 169881, 277465,
+              70561, 92528, 45363, 85023]
+
+#count = 43
+otherDeaths = [4000,  4033,  5000,  2000,  3000,  2000,  2000,  5000,  8000,  2000,  1000,  6000,
+               5000,  8033,  12066, 1000,  5000,  7033,  5033,  5066,  6033,  13033, 5066,  12033,
+               8000,  8000,  7000,  12066, 8066,  10033, 17000, 11000, 27066, 19099, 19099, 30132,
+               40099, 45132, 71495, 81396, 91561, 58198, 74363]
+#count = 43
+
+
+#####  Deaths by Thearter, Cause, Branch or Other
+
+theater1 = ['African', 'Balkans', 'Northern', 'Western', 'Italian', 'Eastern', 'Final Battles', 'Other']
+theater1Num = ['African\n16,066', 'Balkans\n103,693',   'Northern\n30,165',         'Western\n339,957',
+              'Italian\n150,660', 'Eastern\n2,742,909', 'Final Battles\n1,230,045', 'Other\n245,561']
+theaterDeaths = [16066, 103693, 30165, 339957, 150660, 2742909, 1230045, 245561]
+theaterPct = [0.33, 2.13, 0.62, 7.00, 3.10, 56.45, 25.31, 5.05]
+#count = 8
+
+powLoc = ['American', 'French', 'British', 'Yugoslav', 'Soviet', 'Other']
+powLocNum = ['American\n22,000', 'French\n34,033', 'British\n21,033', 'Yugoslav\n11,000',
+             'Soviet\n363,434',  'Other\n8,066']
+powDeaths = [22000, 34033, 21033, 11000, 363343, 8066]
+powPct = [.048, .074, 0.046, .024, .791, .018]
+#count = 6
+
+organization = ['Heer', 'Luftwaffe', 'Kriegsmarine', 'Police', 'Waffen-SS', 'Volksstrum', 'Other']
+organizationNum = ['Heer\n4,202,030',    'Luftwaffe\n432,706', 'Kriegsmarine\n138,429', 'Police\n63,462',
+                   'Waffen-SS\n313,749', 'Volksstrum\n77,726', 'Other\n90,429']
+organizationDeaths = [4202030, 432706, 138429, 63462, 313749, 77726, 90429]
+organizationPct = [.79, .081, .026, .012, .059, .015, .017]
+#count = 7
+
+deathCauseNum = ['No Info\n12,000',       'KIA\n2,303,320',    'Suicide\n25,000',         'In Captivity\n459,475',
+                 'Last Message\n701,385', 'Execution\n11,000', 'Illness/Wounds\n500,165', 'MIA\n1,306,186']
+deathCause = ['No Info', 'KIA', 'Suicide', 'In Captivity', 'Last Message', 'Execution', 'Illness/Wounds', 'MIA']
+causeDeaths = [12000, 2303320, 25000, 459475, 701385, 11000, 500165, 1306186]
+causeDeathsPct = [.0023, .4331,.0047, .0864, .1319,  .0021, .094, .2456]
+#count = 8
+
+recYear = ['Pre-1939', '1939', '1940', '1941', '1942', '1943', '1944', '1945']
+recYearNum = ['Pre-1939\n1,146,141', '1939\n3,527,538', '1940\n4,109,298', '1941\n2,507,457',
+              '1942\n2,465,628',     '1943\n2,005,653', '1944\n1,308,096', '1945\n225,343']
+recMonth = [1146141, 3527538, 4109298, 2507457, 2465628, 2005653, 1308096, 225343]
+recCumm = [1146141, 4673679, 8782977, 11290434, 13756062, 15761715, 17069811, 17295154]
+#count 8
+
+
+## Side by side bar chart of Wehrmacht recruitment and deaths by birth year
+def plot_1(): #Side by side bar chart
+
+    ind = np.arange(52)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    fig = plt.figure(figsize= (18,7))
+    ax = fig.add_subplot(111)
+    r1 = ax.bar(ind, birthCount, width, color='green')
+
+    r2 = ax.bar(ind+width, birthDeaths, width, color='blue')
+
+    ax.set_ylabel('Count', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax.set_xlabel('Year',  weight = 'semibold', labelpad=15, fontsize = 11)
+    ax.set_title('Wehrmacht Recruitment and Deaths by Birth Year', weight = 'bold', y=1.03)
+    ax.set_xticks(ind + width / 2)
+    degrees = 75
+    ax.set_xticklabels(birthYear, rotation = degrees)
+    ax.grid(True)
+    ax.legend((r1[0], r2[0]), ('Count by Birth Year', 'Deaths by Birth Year') )
+
+    plt.show()
+
+# plot_1()
+
+## Wehrmacht deaths by war month, bar chart
+def plot_2():
+
+    fig = plt.figure(figsize = (18, 7))
+
+# creating the bar plot
+    degrees = 75
+    plt.bar(warMonths, grossWarDeaths, color ='maroon', width = 0.55)
+
+    plt.xlabel("Month", weight = 'semibold', labelpad=15, fontsize = 10)
+    plt.ylabel("Deaths", weight = 'semibold', labelpad = 15, fontsize =10)
+    plt.title("Wehrmacht Deaths by War Month", weight = 'bold', y = 1.03)
+
+# plt.yticks(np.arrange(0, 500000, 50000))
+    plt.grid(True)
+    plt.xticks(rotation = degrees)
+    plt.show()
+
+# plot_2()
+# # #
+## Cummulative Wehrmacht war deaths, line chart
+def plot_3():
+
+    fig = plt.figure(figsize=(18,7))
+    plt.plot(warMonths, grossWarCumm, color = 'magenta')
+
+    plt.title("Cummulative Wehrmacht War Deaths", weight = 'bold', y=1.04, fontsize=12)
+    plt.xlabel("Month", weight = 'semibold', labelpad=15, fontsize=11)
+
+    degrees = 75
+    plt.xticks(rotation=degrees)
+    plt.ylabel("Deaths in Millions", weight = 'semibold', labelpad=15, fontsize=11)
+
+    plt.grid(True)
+    plt.show()
+
+# plot_3()
+
+## Cummulative and month to month Wehrmacht deaths, line and bar chart
+def plot_4():
+
+    l = np.arange(69)
+    width = 0.5
+
+    fig = plt.figure(figsize=(18,7))
+    ax9 = fig.add_subplot(111)
+
+    plt.bar(warMonths, grossWarDeaths, color ='maroon', width = 0.55)
+
+    ax9.set_ylabel("Monthly Deaths", weight='semibold',labelpad=15, fontsize=11,)
+    ax9.set_xlabel("Month",  weight='semibold',labelpad=15, fontsize=10)
+    plt.title('Wehrmacht Monthly and Cumulative War Deaths', weight='bold', y=1.04)
+
+    plt.xticks(l, (warMonths))
+    degrees = 75
+    plt.xticks(rotation=degrees)
+
+    ax8 = ax9.twinx()
+    ax8.plot(warMonths, grossWarCumm, color = 'limegreen')
+
+    ax8.set_xlabel("Month", weight = 'semibold', labelpad=15, fontsize=11)
+    ax8.set_ylabel("Total Deaths in Millions", weight = 'semibold', labelpad=15, fontsize=11)
+
+    plt.grid(False)
+    plt.show()
+
+# plot_4()
+
+## Tripple bar chart displaying eastern front deaths
+def plot_5():
+
+    ind = np.arange(43)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    fig = plt.figure(figsize= (18,7))
+    ax = fig.add_subplot(111)
+
+    r1 = ax.bar(ind, otherDeaths, width, color='green')
+    r2 = ax.bar(ind+width, eastDeaths, width, color='blue')
+    r3 = ax.bar(ind+width+width, totalDeaths, width, color='red')
+
+    ax.set_ylabel('Deaths', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax.set_xlabel('Year',  weight = 'semibold', labelpad=15, fontsize = 11)
+    ax.set_title('Wehrmacht Deaths On Eastern Front Compared to Others from June 1941 to Dec 1944',
+                 weight = 'bold', y=1.03)
+    ax.set_xticks(ind + width / 2)
+    degrees = 75
+    ax.set_xticklabels(eastMonths, rotation = degrees)
+    ax.grid(False)
+    ax.legend((r1[0], r2[0], r3[0]), ('Deaths on Other Fronts', 'Deaths on Eastern Front', 'Total Deaths') )
+
+    plt.show()
+
+# plot_5()
+
+## Pow Deaths - Pie and Bar
+def plot_6(): #pie
+    #plt.figure(figsize= (18,7))
+    sizes = [.048, .074, 0.046, .024, .791, .018]
+
+#colors
+    colors = ['lightcoral','peru','darkorange','chartreuse', 'darkgreen', 'turquoise']
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figheight(7)
+    fig.set_figwidth(18)
+    fig.suptitle("POW Deaths by Nation Held" , weight= 'bold', y=.98)
+    ax1.pie(sizes, colors = colors, labels=powLoc, autopct='%1.2f%%', startangle=-15, pctdistance = .8)
+
+# Equal aspect ratio ensures that pie is drawn as a circle
+    ax1.axis('equal')
+    plt.tight_layout()
+
+# The bar chart
+    ind = np.arange(6)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    r1 = ax2.bar(ind, powDeaths, color='mediumvioletred')
+
+    ax2.set_ylabel('Deaths', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax2.set_xlabel('Nationality and Death Counts',  weight = 'semibold', labelpad=7, fontsize = 11)
+    #ax2.set_title('Wehrmacht POW Deaths by Held Nationality', weight = 'bold', y=1.03)
+    ax2.set_xticks(ind)
+    degrees = 0
+    ax2.set_xticklabels(powLocNum, rotation = degrees)
+
+    plt.show()
+
+# plot_6()
+
+## Deaths by Org - Pie and Bar
+def plot_7():
+    sizes = [.79, .081, .026, .012, .059, .015, .017]
+
+#colors
+    colors = ['lightcoral','peru','darkorange','chartreuse', 'darkgreen', 'turquoise', 'fuchsia']
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figheight(7)
+    fig.set_figwidth(18)
+    fig.suptitle("Wehrmacht Deaths by Organization" , weight= 'bold', y=.98)
+    #fig1, ax1 = plt.subplots()
+
+    ax1.pie(sizes, colors = colors, labels=organization, autopct='%1.2f%%', startangle=-15, pctdistance = .8)
+
+# Equal aspect ratio ensures that pie is drawn as a circle
+    ax1.axis('equal')
+    plt.tight_layout()
+
+    #plt.title("Proportion of Deaths by Organization", weight= 'bold', y=.98)
+    #plt.legend(organizationNum, loc=(.9,0.2), title = 'Organization')
+    # plt.show()
+
+# The bar chart
+    ind = np.arange(7)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    #fig = plt.figure(figsize= (18,7))
+    #ax2 = fig.add_subplot(111)
+
+    r1 = ax2.bar(ind, organizationDeaths, color='mediumvioletred')
+
+    ax2.set_ylabel('Deaths in Millions', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax2.set_xlabel('Organization and Death Counts',  weight = 'semibold', labelpad=15, fontsize = 11)
+    #ax.set_title('Wehrmacht Deaths by Organization', weight = 'bold', y=1.03)
+    ax2.set_xticks(ind)
+    degrees = 0
+    ax2.set_xticklabels(organizationNum, rotation = degrees)
+
+    plt.show()
+
+# plot_7()
+
+## Deaths by Cause - Pie and Bar
+def plot_8():
+    sizes = [.0023, .4331,.0047, .0864, .1319,  .0021, .094, .2456]
+
+#colors
+    colors = ['lightcoral','peru','darkorange','chartreuse', 'darkgreen', 'turquoise', 'fuchsia', 'crimson']
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figheight(7)
+    fig.set_figwidth(18)
+    fig.suptitle("Wehrmacht Deaths by Cause" , weight= 'bold', y=.98)
+    ax1.pie(sizes, colors = colors, labels=deathCause, autopct='%1.2f%%', startangle=-30, pctdistance = .8)
+
+# Equal aspect ratio ensures that pie is drawn as a circle
+    ax1.axis('equal')
+    plt.tight_layout()
+
+    ind = np.arange(8)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    r1 = ax2.bar(ind, causeDeaths, color='mediumvioletred')
+
+    ax2.set_ylabel('Deaths in Millions', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax2.set_xlabel('Cause of Death and Death Counts',  weight = 'semibold', labelpad=15, fontsize = 11)
+    ax2.set_xticks(ind)
+    degrees = 0
+    ax2.set_xticklabels(deathCauseNum, rotation = degrees)
+
+
+    plt.show()
+
+#plot_8()
+
+## Deaths by Theater - Pie and Bar
+def plot_9():
+
+    sizes = [0.33, 2.13, 0.62, 7.00, 3.10, 56.45, 25.31, 5.05]
+
+#colors
+    colors = ['lightcoral','peru','darkorange','chartreuse', 'darkgreen', 'turquoise', 'teal', 'dodgerblue']
+
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figheight(7)
+    fig.set_figwidth(18)
+    fig.suptitle("Wehrmacht Deaths by Theater" , weight= 'bold', y=.98)
+    ax1.pie(sizes, colors = colors, labels=theater1, autopct='%1.2f%%', startangle=0, pctdistance = .8)
+
+# Equal aspect ratio ensures that pie is drawn as a circle
+    ax1.axis('equal')
+    plt.tight_layout()
+
+    ind = np.arange(8)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+
+    r1 = ax2.bar(ind, theaterDeaths, color='mediumvioletred')
+
+    ax2.set_ylabel('Deaths in Millions', weight = 'semibold', labelpad=15, fontsize = 11)
+    ax2.set_xlabel('Theater and Death Counts',  weight = 'semibold', labelpad=15, fontsize = 11)
+    #ax2.set_title('Wehrmacht Deaths by Theater', weight = 'bold', y=1.03)
+    ax2.set_xticks(ind)
+    degrees = 0
+    ax2.set_xticklabels(theater1Num, rotation = degrees)
+
+
+    plt.show()
+#plot_9()
+
+# Wehrmacht Recruitment
+def plot_10():
+
+    N = 8
+
+    l = np.arange(N)
+    width = 0.5
+
+    fig = plt.figure(figsize=(18,7))
+    ax9 = fig.add_subplot(111)
+
+    plt.bar(recYear, recMonth, color ='maroon', width = 0.55)
+
+    ax9.set_ylabel("Annual Recruitment in Millions", weight='semibold',labelpad=15, fontsize=11,)
+    ax9.set_xlabel("Year and Recruitment Count",  weight='semibold',labelpad=15, fontsize=12)
+    plt.title('Annual and Cumulative Wehrmacht Recruitment', weight='bold', y=1.04)
+
+    plt.xticks(l, (recYear))
+    degrees = 0
+    plt.xticks(rotation=degrees)
+
+    ax8 = ax9.twinx()
+    ax8.plot(recYearNum, recCumm, color = 'limegreen')
+
+    #ax8.set_xlabel("Year", weight = 'semibold', labelpad=15, fontsize=12)
+    ax8.set_ylabel("Total Recruitment in Tens of Millions", weight = 'semibold', labelpad=15, fontsize=11)
+
+    #plt.legend(('Total'), loc=(0.0092,0.65))
+    plt.grid(False)
+    plt.show()
+
+
+# plot_10()
+
+
+def first_menu():
+    print("[A]  Enter A to see the plots.")
+    print("[B]  Enter B for more information.")
+
+
+##  Give the user some context.
+
+print()
+print('\033[1m' + "Welcome to this interactive program!" + '\033[0m')
+print("\nHere you will have the view information on German deaths during World War II.\n"
+      "The program has a handful of attributes:\n\n"
+      "First, there are different type of plots and graphs the display information along\n"
+      "with descriptions. These plots show information ranging from deaths by month to\n"
+      "to Wehrmacht recruitment by year of birth of service members.\n\n"
+      "Secondly, there will be additional information on certain dates that may have more\n"
+      "significance than others (i.e. Stalingrad/D-Day).\n\n"
+      "For best experience start with the charts then move to additional information.\n"
+      "What would you like to see first?")
+
+print()
+
+first_menu()
+print()
+choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+
+# Setting an initial value for choice other than the value for 'quit'.
+# choice = ''
+#
+
+
+
+def plot_menu():
+    print('\033[21m' + 'Plot Selection\n' + '\033[0m')
+    print("[1]  Enter  1 for chart 1:  A side by side bar chart showing Wehrmacht recruitment and deaths by birth year.")
+    print("[2]  Enter  2 for chart 2:  A bar chart displaying Wehrmacht war deaths by month.")
+    print("[3]  Enter  3 for chart 3:  A line chart showing cumulation of Wehrmacht war deaths.")
+    print("[4]  Enter  4 for chart 4:  A bar and line chart showing month to month deaths and cumulation.")
+    print("[5]  Enter  5 for chart 5:  A triple bar chart showing the difference of Eastern deaths to other fronts.")
+    print()
+    print("[6]  Enter  6 for chart 6:  Pie and bar charts showing in POW camps by held nationality.")
+    print("[7]  Enter  7 for chart 7:  Pie and bar charts showing deaths by Wehrmacht organization.")
+    print("[8]  Enter  8 for chart 8:  Pie and bar charts showing the deaths by cause.")
+    print("[9]  Enter  9 for chart 9:  Pie and bar charts showing the deaths by theater.")
+    print("[10] Enter 10 for chart 10: A bar chart showing Wehrmacht Recruitment by Year.")
+    print()
+    print("[B] Enter B for more information.")
+    print("[Q] Enter Q to quit.\n")
+
+def info_menu():
+    print('\033[21m' + '\nFurther Information' + '\033[0m')
+    print("\n[11] Enter 11 for more Recruitment Information.")
+    print("[12] Enter 12 for more info on June 1941.")
+    print("[13] Enter 13 for more info on July and August 1942.")
+    print("[14] Enter 14 for more info on January 1943.")
+    print("[15] Enter 15 for more info on July 1943.")
+
+    print("\n[16] Enter 16 for more info on June 1944.")
+    print("[17] Enter 17 for more info on July 1944.")
+    print("[18] Enter 18 for more info on December 1944.")
+
+    print("\n[A]  Enter A to see the plot menu.")
+
+    print("\n[Q]  Enter Q to quit.\n")
+
+choice = choice.upper()
+
+# Start a loop that runs until the user enters the value for 'quit'.
+while choice != 'Q':
+    choice = choice.upper() #upper and lower case are accepted
+    # Give all the choices in a series of print statements.
+    print()
+
+    if choice == 'A':
+        choice = choice.upper()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == 'B':
+        choice = choice.upper()
+        info_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+
+    elif choice == '1':
+        print('\033[1m' + "\nChart 1 displays the Wehrmacht recruitment and deaths by their birth year.\n\n"
+                          "The vast majority of service members were born between 1895 and 1925, with\n"
+                          "still a substantial number being born before 1895 and after 1925. What is interesting\n"
+                          "about these numbers are that those outside of that 1895-1925 range would've\n"
+                          "either been old men or young boys (in military terms), in no condition to fight in\n"
+                          "a war. However, in the dying days of Third Reich these men and boys were called up for\n"
+                          "service to defend Germany by joining the Volksstrum, or Home Army. These units were\n"
+                          "nothing like regular Heer or Waffen-SS units that consisted of professionally trained,\n"
+                          "well motivated, and able-bodied men. Volksstrum units experienced higher rates of loss\n"
+                          "than regular units, so much so that Hitler forbade them from engaging enemy units by\n"
+                          "themselves, but rather had to fight with regular army units.\n"
+                          "\nAs for the substantial dip in recruitment in the 1915-1919 window, it aligns\n"
+                          "perfectly with the horrors of World War I and all the men that died fighting in\n"
+                          "the trenches for the German Empire.\n" + '\033[0m')
+        plot_1()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+
+    elif choice == '2':
+        print('\033[1m' + "\nChart 2 shows Wehrmacht deaths by war month. The reason for distinction of war\n"
+                          "months is that over a quarter million men died in POW camps postwar.\n"
+                          "\nThe war started out rather well for the Wehrmacht in terms of deaths. Utilizing\n"
+                          "expert generalship and Blitzkrieg tactics the German Army and Air Force was able\n"
+                          "to smash and pincer there way through Poland and the Low Countries with minimal\n"
+                          "struggle. It wasn't until Operation Barbarossa was launched in June 1941 against\n"
+                          "the Soviet Union that the deaths started to mount. But in the opening year of the\n"
+                          "war of annihilation against the Soviets, the Wehrmacht was incredibly successful\n"
+                          "in meeting most of their objectives and crushing Soviet resistance.\n"
+                          "\nHowever, as the chart shows, this would not last. The first big spike in deaths\n"
+                          "comes in Jan-1943 with the great defeat at Stalingrad, where the whole Sixth Army\n"
+                          "was lost. And after a lull in combat in the spring and early summer of 1943,\n"
+                          "the deaths and losses would only increase to unsustainable levels.\n\n" + '\033[0m')
+        plot_2()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+
+    elif choice == '3':
+        print('\033[1m' + "\nChart 3 shows the cumulating of Wehrmacht deaths as the war progressed.\n "
+                          "\nThe line stays relatively flat until June 1941, the invasion of the Soviet Union.\n"
+                          "Fighting on the Eastern Front would prove to be a meatgrinder for men and machines,\n"
+                          "the majority of resources that the Wehrmacht could muster would be sent out East.\n"
+                          "\n" + '\033[0m')
+        plot_3()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+
+    elif choice == '4':
+        print('\033[1m' + "\nChart 4 is a combination of Charts 2 and 3.\n"
+                          "\nThese charts together put an even better visualization on the month to month deaths\n"
+                          "suffered by the Wehrmacht. Deaths reach an unsustainable and unrecoverable level by\n"
+                          "Aug-1943 with the failure of Operation Citadel, the German attempt to regain the\n"
+                          "offensive initiative and crush the Kursk salient.\n\n" + '\033[0m')
+        plot_4()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+    elif choice == '5':
+        print('\033[1m' + "\nChart 5 shows a split between Eastern Front deaths compared to all other fronts.\n"
+                          "\nThe data for this is only from June 1941 to December 1944, the dates that the\n"
+                          "author of the data distinguishes the fronts from each other. Clearly visible, again,\n"
+                          "the dramatic difference in deaths between the Eastern front and others. It isn't until\n"
+                          "June 1944 that deaths in other fronts start to rise to come anywhere near the Eastern\n"
+                          "front. The invasion of France and fighting into Western Germany is a very concise\n"
+                          "explanation for this.\n" + '\033[0m')
+        plot_5()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+    elif choice == '6':
+        print('\033[1m' + "\nChart 6 shows Wehrmacht deaths in POW camps by held nationality.\n"
+                          "\nBy the end of the war, millions of Wehrmacht personnel would be taken into custody by\n"
+                          "Allied powers. Most would see there homeland again, but a lot would not. As is visible\n"
+                          "in the chart, most of the POW deaths occurred while in Soviet hands. The Soviet Union\n"
+                          "used German POW's as slave labor in the numerous Siberian gulags, against the Geneva\n"
+                          "convention. Tens of thousands would die from lack of medical care, food, and warmth\n"
+                          "while in Soviet hands. Most prisoners started the repatriation process in 1948.\n"
+                          "\nIt is no wonder why so many German soldiers fought to escape the Red Army.\n"
+                          "Surrendering to the Soviets was seen by many as death sentence but worse; a fate where\n"
+                          "a soldier would be worked to death in frozen gulags was the common conception, and this\n"
+                          "was not inaccurate. In the dying days of the Third Reich, the 9th Army just south of\n"
+                          "Berlin fought intense battles in the Halbe forest for the sole purpose of reaching the\n"
+                          "American lines to the west to surrender instead of surrendering to the Soviets. Tens of\n"
+                          "thousands would die in this attempt, but thousands would reach their salvation and escape\n"
+                          "being captured by the Soviets and sent to the gulags.\n" + '\033[0m')
+        plot_6()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n" + '\033[0m')
+
+    elif choice == '7':
+        print('\033[1m' + "\nChart 7 shows deaths of the Wehrmacht by organization.\n"
+                          "The Heer, or Army, bore the blunt of deaths throughout the war. The Luftwaffe, or\n"
+                          "Air Force and Kriegsmarine, or Navy, also experienced large numbers of deaths.\n"
+                          "Many Luftwaffe deaths didn't occur in the sky, but rather in the last year of the\n"
+                          "war when many grounds crew were converted into infantrymen.\n"
+                          "\nAnother organization of note is the Waffen-SS, an elite fighting unit full of\n"
+                          "volunteers from many nationalities. Many of the men joined the Waffen-SS to fight\n"
+                          "communism and the Soviet Union. Waffen-SS units were often thrown into fights with\n"
+                          "little chance of success, but they fought with bloody determination and were fearsome\n"
+                          "units to encounter.\n"
+                          "\nEven though the Heer suffered the most deaths, there were some units within the Wehrmacht\n"
+                          "the suffered incredible loss rates in excess of 90%. In the Kriegsmarine the much feared\n"
+                          "U-Boat fleets hunted and sank 2,882 merchant ships and 175 warships during the war.\n"
+                          "However, they would pay an incredibly steep price. Of the 842 U-boats that saw service,\n"
+                          "781 would be sunk for a death rate of 93%.\n" + '\033[0m')
+        plot_7()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '8':
+        print('\033[1m' + "\nChart 8 shows the proportion of deaths by cause.\n"
+                          "\nThe vast majority of deaths occurred in battle, Killed in Action. Another substantial\n"
+                          "portion were considered Missing in Action, presumed killed but not found.\n"
+                          "Unfortunately, the category Last Message is not clearly defined by the author.\n" + '\033[0m')
+        plot_8()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '9':
+        print('\033[1m' + "\nChart 9 shows the deaths of each theater.\n"
+                          "\nAs is clearly visible, the theater where the Wehrmacht service members were killed\n"
+                          "was the Eastern front. This is where the bloodiest and the costliest battles occurred,\n"
+                          "such as Stalingrad, Operation Citadel, and Operation Bagration. These three major\n"
+                          "engagements totaled over half a million Wehrmacht dead alone, more than any front\n"
+                          "except for Final Battles.\n"
+                          "\nOf note on the chart is the front Final Battles. There was no front with this\n"
+                          "official name, however the author of the data, Overmans, does a offer a very clean\n"
+                          "definition and reasoning behind Final Battles. As 1945 began, all fronts started\n"
+                          "to break down and become less distinguishable from each other. Men were fleeing\n"
+                          "the Red Army to move West in order to surrender to the more merciful Western\n"
+                          "powers, thus the fronts slowly merged together. Because of the chaos of the\n"
+                          "final days of the Third Reich, proper and accurate record keeping became more \n"
+                          "and more challenging. So instead of keeping the fronts separate for the end of\n"
+                          "the war, all deaths are merged into the category Final Battles.\n" + '\033[0m')
+        plot_9()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '10':
+        print('\033[1m' + "\nChart 10 shows Wehrmacht Recruitment by Year\n"
+                          "\nThe Wehrmacht heavily increased their recruitment after 1935 when the draft was\n"
+                          "reintroduced. Recruitment reached its peak in 1940, and by 1941 the Wehrmacht was at its\n"
+                          "highest. Before the invasion of the Soviet Union, their war machine was at its peak.\n"
+                          "As the war raged on, the pool of fighting eligible men started to diminish. And by the\n"
+                          "end of 1944, most of the recruits were old men and young boys, in no condition to fight.\n" + '\033[0m')
+        plot_10()
+        plot_menu()
+        print()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+
+    # ########    Further detailed info section for user to pick from     ##########
+
+    elif choice == '11':
+        print('\033[1m'"\nRecruitement Information\n")
+
+        print(
+            '\033[31m' + "In 1935, Hitler reinstated conscription in the Third Reich, against the terms of the Treaty of\n"
+                         "Versailles, Britain and France did nothing. The Wehrmacht quickly ramped up recruitment and\n"
+                         "the number of soldiers grew immensely. By the outbreak of war over 1.1 million men were in the\n"
+                         "armed forces, and the end end of 1940 that number grew to nearly 9 million men.\n"
+                         "\nAs the war raged on though, the pool of able bodied men was quickly running low and by\n"
+                         "mid-1944, Hitler had nowhere else to turn to except old men and young boys. These men and boys\n"
+                         "would become Volksstrum units. Though officially the age range was between 16 to 60, in\n"
+                         "reality boys as young as 12 were forced to fight and men as old as 70. They were poorly\n"
+                         "equipped, poorly trained, and poorly motivated. As a result, they suffered immensely against\n"
+                         "professional soldiers of the Soviet Union, United States, and other powers. By the end of the\n"
+                         "war, nearly 80,000 of these men and boys would die fighting for the collapsing Third Reich.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '12':
+        print('\033[1m' + "\nInformation on June 1941 - Operation Barbarossa\n" + '\033[1m')
+
+        print(
+            '\033[31m' + "Early on the morning of June 22, 1941, Nazi Germany invaded the Soviet Union. This was the\n"
+                         "beginning of the single bloodiest conflicts in history, a war of total annihilation.\n"
+                         "Hitler's objective was to wipe the Soviet Union from the map and was highly confident in\n"
+                         "the tactical and technological superiority of the Wehrmacht. In the first months of the\n"
+                         "invasion, he proved correct. Millions of Red Army soldiers were killed or captured in some\n"
+                         "of the greatest military blunders and defeats of the war. However, the Soviet Union had the\n"
+                         "capacity to absorb these tremendous losses, and by December 1941, Operation Barborossa,\n"
+                         "despite its initial great success had ground to a halt just a couple dozen miles from the\n"
+                         "Kremlin in Moscow.\n"
+                         "\nWith the failure of knocking out the Soviet capital and crushing the Red Army into\n"
+                         "submission going into 1942, Germany would have to fight an continuously escalating and\n"
+                         "bloody war. Some in the Army High Command saw the failure of Barborossa as the catalyst for\n"
+                         "Germany's eventual defeat in 1945 whereas other saw it as a roadblock for victory to be\n"
+                         "achieved in 1942. Either way, German losses would be accelerated from this point further."
+                         "\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '13':
+        print('\033[1m' + "\nMore Information on July-August 1942 - Case Blue\n" + '\033[1m')
+
+        print('\033[31m' + "In the summer of 1942 the Germans launched a massive offensive, Case Blue.\n"
+                           "Initially planned as a single spearhead to seize the oilfields of the Caucasus and Baku,\n"
+                           "Hitler diverted the Sixth Army to Stalingrad to take the city of Stalin's namesake and secure\n"
+                           "his flanks to protect his winnings in the Caucasus. However, this split in forces would\n"
+                           "prove to be a fatal mistake for the Wehrmacht.\n"
+                           "\nEven after initial success in Stalingrad and the Caucuses, Soviet resistance and the long\n"
+                           "and vulnerable supply lines started to grind the German offensive to a crawl. \n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '14':
+        print('\033[1m' + "\nMore Information on January 1943 - Loss of Stalingrad\n" + '\033[1m')
+
+        print('\033[31m' + "After the Soviet success of Operation Uranus and the encirclement of the Sixth Army in\n"
+                           "Stalingrad in November, the fate of Stalingrad was all but sealed.\n"
+                           "\nThe Sixth Army was commanded by Field Marshall Frederich Paulus, and he obeyed Hitler's\n"
+                           "order to hold onto the city and wait for relief in the form of General Erich von Manstein's\n"
+                           "army to the south and Hermann Goerings Luftwaffe to keep the men feed and machines fueled.\n"
+                           "However, Operation Winter Storm, lead by Manstein failed to break the encirclement and the\n"
+                           "Luftwaffe was grossly inadequate to keep the men from starving or freezing. As a result,\n"
+                           "tens of thousands of men died in horrific and frozen conditions.\n"
+                           "\nTo many, this is the turning point of the war. The collapse and destruction of an entire\n"
+                           "German army was thought to be impossible, but here it happened. This would not be the last\n"
+                           "time and an entire army was wiped out.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '15':
+        print('\033[1m'"\nMore Information on July 1943 - Operation Citadel\n" + '\033[1m')
+
+        print('\033[31m' + "After the failure and loss at Stalingrad, the Wehrmacht recovered and was able to halt\n"
+                           "Soviet offenses after suffering loss after loss. And in the spring and early summer of\n"
+                           "1943, the Wehrmacht built up for a massive offensive against the Kursk salient, Operation\n"
+                           "Citadel. The objective was to crush the salient and regain the offensive initiative in the\n"
+                           "East. The build up brand new armored units included the excellent Panther tanks among other\n"
+                           "armored vehicles. The Panther, Tiger, and Ferdinand tank destroyer were rushed to the front\n"
+                           "for the offensive. The rush had consequences though, as well armed and armored as these\n"
+                           "vehicles were, there reliability was horrific. Breaking down often and repairs were\n"
+                           "typically not possible in the field.\n"
+                           "\nIn early July of 1943 Operation Citadel was launched. Two spearheads were meant to meet\n"
+                           "and cut off the Kursk salient and result in the capture of death of over a million Soviet\n"
+                           "soldiers. However, the offensive stalled rather quickly in the wake of heavy Soviet\n"
+                           "resistance and constant breakdowns of armored units.\n"
+                           "\nOperation Citadel was a complete failure for the Wehrmacht. Not only did they fail to\n"
+                           "meet their objectives but they lost over a thousand armored tanks and other armored vehicles\n"
+                           "on top of over a hundred thousand deaths. The result of this failure is the complete loss\n"
+                           "of the offensive initiative in the East and the loss rate of men and machines reached a rate\n"
+                           "that the German war machine could not replace.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '16':
+        print('\033[1m'"\nMore Information on June - Operation Overlord\n" + '\033[1m')
+
+        print('\033[31m' + "On June 6th, 1944, the single largest amphibious landing and invasion occurred, Operation\n"
+                           "Overlord, the invasion of Normandy. For years the Germans knew an invasion was going to\n"
+                           "happen somewhere, they just didn't know where. One of the largest construction projects was\n"
+                           "undertaken, the Atlantic Wall. Under the supervision of Field Marshall Erwin Rommel, guns\n"
+                           "bunkers, and other defensive emplacements were built from the French-Spanish border all\n"
+                           "the way to the North of Norway were built.\n"
+                           "\nAdditionally, over a million men are in the region reinforced by numerous Panzer divisions.\n"
+                           "However, the Germans didn't know where the invasion was going to take place. Hitler, though,\n"
+                           "was convinced that the landing was going to happen at Calais.\n"
+                           "\nWhen the landings happened on June 6th, Hitler held the Panzer divisions and other\n"
+                           "reinforcements convinced that the landings were a diversion for something bigger. However,\n"
+                           "that bigger invasion didn't exist and Hitler fell for the incredible deception by the Allies.\n"
+                           "The failure to hold the Allies in Normandy would be catastrophic for the Wehrmacht.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '17':
+        print('\033[1m'"\nMore on July 1944 - Operation Bagration and the Annihilation of Army Group Center\n" + '\033[1m')
+
+        print('\033[31m' + "Just a month after the German failure to stop the Allied landings in Normandy, the Soviets\n"
+                         "launched Operation Bagration. Their objective was simple, annihilate Army Group Center.\n"
+                         "The operation included over about two million soldiers, 5,500 tanks and armored guns, and\n"
+                         "nearly eight thousand aircraft. The Soviet forces dwarfed what the Wehrmacht could muster.\n"
+                         "\nThe Soviet offensive completely rolled over Wehrmacht resistance the Army Group Center\n"
+                         "caved everywhere. After almost a month the offensive finally halted, but not due to German\n"
+                         "resistance, but rather the Soviets exhausted their supplies and overran their own supply\n"
+                         "lines. By the end of it, tens of thousands of Germans were killed with many more wounded\n"
+                         "or captured. Army Group Center was entirely destroyed.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == '18':
+        print('\033[1m' + "\nDecember 1944 - Ardenness Offensive\n" + '\033[1m')
+
+        print('\033[31m' + "In December of 1944, the military situation for Germany was worsening every day. Fuel\n"
+                           "ammunition, and vehicles were all in short supply. The Soviets were pressing from the East\n"
+                           "and the Western powers from the West. Hitler thought if he could achieve an immense victory\n"
+                           "against the Americans and British they would be willing to negotiate a peace. So he set his\n"
+                           "eyes on capturing the critical port of Antwerp which supplied most of the material that was\n"
+                           "fueling Allied offensives in France and Belgium.\n"
+                           "\nThe daring attack consisted of over 400,000 men and nearly 2,000 tanks and other armored\n"
+                           "vehicles. The initial success on December 16th were immense. The Wehrmacht was able to\n"
+                           "push a substantial way into the American lines forming a large bulge, hence the battle is\n"
+                           "often referred to as Battle of the Bulge. However, the successes would not last.\n"
+                           "\nFuel shortages for the tanks, improved weather for Allied aircraft, and feisty American\n"
+                           "resistance hampered the offensive from each key objectives. And in the end the Wehrmacht\n"
+                           "substantially exhausted itself in the attempt and weakened Germany's ability to defend\n"
+                           "itself from future Allied attacks.\n" + '\033[0m')
+        info_menu()
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+    elif choice == "A":
+        print("\nHere's the Plot Menu")
+
+    elif choice == "B":
+        print("\nHere's more info")
+
+
+    elif choice == 'Q':
+        print("\nThanks for reading, but go do your own research now.\n"
+              "There's so much information out there, go learn!")
+        exit(0)
+
+    else:
+        print("\nWhat?? Try again.\n")
+
+        choice = input('\033[21m' + "What would you like to do?\n\n" + '\033[0m')
+
+
+
+plot_1()
+plot_2()
+plot_3()
+plot_4()
+plot_5()
+plot_6()
+plot_7()
+plot_8()
+plot_9()
+plot_10()
+
+info_menu()
+plot_menu()
+first_menu()
+
